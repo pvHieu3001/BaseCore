@@ -1,5 +1,5 @@
 - name: "configuration play"
-  hosts: ubuntu
+  hosts: all
   user: ubuntu
   become: true
   gather_facts: false

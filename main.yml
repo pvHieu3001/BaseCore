@@ -19,4 +19,4 @@
 
     - setup:
   roles:
-    - configure-server
+    - configure_infastructure

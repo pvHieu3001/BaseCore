@@ -2,6 +2,15 @@
 # See: https://circleci.com/docs/configuration-reference
 # update pipeline
 version: 2.1
+  destroy_environment:
+    steps:
+      - run:
+          name: Destroy environment
+          # ${CIRCLE_WORKFLOW_ID} is a Built-in environment variable 
+          # ${CIRCLE_WORKFLOW_ID:0:5} takes the first 5 chars of the variable CIRCLE_CI_WORKFLOW_ID 
+          when: on_fail
+          command: |
+            aws cloudformation delete-stack --stack-name my-stack
 jobs:
   create-infastructure:
     docker:
@@ -28,9 +37,28 @@ jobs:
           name: Configure server
           command: |
             ansible-playbook -i inventory main.yml
+  smoke_test:
+    docker:
+      - image: alpine:latest
+    steps:
+      - run: apk add --update curl
+      - run:
+          name: smoke test
+          command: |
+            URL="http://52.207.243.63:3000/"
+            # Test if website exists
+            if curl -s --head ${URL} 
+            then
+              return 0
+            else
+              return 1
+            fi
+      - destroy_environment
+        when: on_fail
 
 workflows:
   my-workflow:
     jobs:
 #      - create-infastructure
       - configure_infastructure
+      - smoke_test

@@ -12,7 +12,24 @@ jobs:
           name: "Create instance"
           command: |
             aws cloudformation deploy --template-file template.yml --stack-name my-stack
+  configure_infastructure:
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - checkout:
+      - add_ssh_keys:
+        fingerprints: ["27:b8:14:d3:6d:d2:41:5b:23:2d:3b:f7:59:96:e1:c1"]
+      - run:
+        name: Install dependancies
+        command: |
+          apk add --update ansible
+      - run:
+        name: Config server
+        command: |
+          ansible-playbook -i inventory main.yml
+
 workflows:
   my-workflow:
     jobs:
-      - create-infastructure
+#      - create-infastructure
+      - configure_infastructure

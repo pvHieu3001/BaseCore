@@ -20,13 +20,14 @@ jobs:
       - add_ssh_keys:
         fingerprints: ["27:b8:14:d3:6d:d2:41:5b:23:2d:3b:f7:59:96:e1:c1"]
       - run:
-        name: Install dependancies
-        command: |
-          apk add --update ansible
+          name: Install dependencies
+          command: |
+            # install the dependencies needed for your playbook
+            apk add --update ansible 
       - run:
-        name: Config server
-        command: |
-          ansible-playbook -i inventory main.yml
+          name: Configure server
+          command: |
+            ansible-playbook -i inventory.txt main4.yml
 
 workflows:
   my-workflow:
